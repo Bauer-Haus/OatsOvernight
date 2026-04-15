@@ -1,0 +1,226 @@
+import React, { useState, useMemo } from 'react';
+import { Trophy, Star, ChevronDown } from 'lucide-react';
+
+// Tier definitions and their point values for the summing math
+const TIERS = [
+  { id: 'S', points: 7, color: 'bg-red-500', text: 'text-white' },
+  { id: 'A', points: 6, color: 'bg-orange-400', text: 'text-black' },
+  { id: 'B', points: 5, color: 'bg-yellow-400', text: 'text-black' },
+  { id: 'C', points: 4, color: 'bg-green-400', text: 'text-black' },
+  { id: 'D', points: 3, color: 'bg-cyan-400', text: 'text-black' },
+  { id: 'E', points: 2, color: 'bg-blue-400', text: 'text-white' },
+  { id: 'F', points: 1, color: 'bg-purple-400', text: 'text-white' },
+];
+
+const getTierPoints = (tierId) => TIERS.find(t => t.id === tierId)?.points || 0;
+
+// Helper to convert average points back to a letter grade for display
+const getAverageTier = (averagePoints) => {
+  const rounded = Math.round(averagePoints);
+  // Find the exact match, or if it falls below 1 somehow, default to F
+  return TIERS.find(t => t.points === rounded) || TIERS[TIERS.length - 1]; 
+};
+
+// Pre-loaded realistic mock data (points adjusted for the 1-7 scale)
+const initialFlavors = [
+  { id: 'mocha-dream', name: 'Mocha Dream', baseTotal: 335, baseVotes: 52 },
+  { id: 'cinnamon-roll', name: 'Cinnamon Roll', baseTotal: 295, baseVotes: 50 },
+  { id: 'mango-custard', name: 'Mango Custard', baseTotal: 260, baseVotes: 49 },
+  { id: 'coconut-cream-pie', name: 'Coconut Cream Pie', baseTotal: 250, baseVotes: 48 },
+  { id: 'mint-chocolate-chip', name: 'Mint Chocolate Chip', baseTotal: 235, baseVotes: 47 },
+  { id: 'cookies-cream', name: 'Cookies & Cream', baseTotal: 220, baseVotes: 49 },
+  { id: 'dark-chocolate', name: 'Dark Chocolate Sea Salt', baseTotal: 210, baseVotes: 46 },
+  { id: 'maple-pancakes', name: 'Maple Pancakes', baseTotal: 180, baseVotes: 44 },
+  { id: 'pb-cookie-dough', name: 'Peanut Butter Cookie Dough', baseTotal: 165, baseVotes: 45 },
+  { id: 'smores', name: 'S\'mores', baseTotal: 150, baseVotes: 42 },
+  { id: 'strawberries-cream', name: 'Strawberries & Cream', baseTotal: 120, baseVotes: 43 },
+  { id: 'glazed-blueberry', name: 'Glazed Blueberry Donut', baseTotal: 90, baseVotes: 40 },
+];
+
+export default function App() {
+  const [ratings, setRatings] = useState({});
+
+  const handleRate = (flavorId, tierId) => {
+    // If clicking the same tier, toggle it off (un-rate)
+    if (ratings[flavorId] === tierId) {
+      const newRatings = { ...ratings };
+      delete newRatings[flavorId];
+      setRatings(newRatings);
+    } else {
+      setRatings(prev => ({ ...prev, [flavorId]: tierId }));
+    }
+  };
+
+  // Calculate the aggregated results dynamically
+  const rankedFlavors = useMemo(() => {
+    return initialFlavors.map(flavor => {
+      const userTier = ratings[flavor.id];
+      const userPoints = userTier ? getTierPoints(userTier) : 0;
+      
+      // Calculate totals combining base mock data + user's local session vote
+      const totalPoints = flavor.baseTotal + userPoints;
+      const totalVotes = flavor.baseVotes + (userTier ? 1 : 0);
+      const average = totalPoints / totalVotes;
+      const avgTierData = getAverageTier(average);
+      
+      return {
+        ...flavor,
+        totalPoints,
+        totalVotes,
+        average: average.toFixed(1),
+        avgTierData
+      };
+    }).sort((a, b) => b.totalPoints !== a.totalPoints 
+      ? b.totalPoints - a.totalPoints 
+      : a.name.localeCompare(b.name)
+    );
+  }, [ratings]);
+
+  const highestPoints = rankedFlavors[0]?.totalPoints || 1;
+
+  const getTrophyColor = (index) => {
+    switch(index) {
+      case 0: return 'text-yellow-400 fill-yellow-400 drop-shadow-md';
+      case 1: return 'text-slate-300 fill-slate-200 drop-shadow-md';
+      case 2: return 'text-amber-700 fill-amber-700/60 drop-shadow-md';
+      default: return 'text-transparent';
+    }
+  };
+
+  const handleScrollToVote = (e) => {
+    e.preventDefault();
+    const voteSection = document.getElementById('vote-section');
+    if (voteSection) {
+      voteSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-stone-50 text-stone-900 font-sans pb-20">
+      {/* Header */}
+      <header className="bg-white border-b border-stone-200 py-4 px-4 sticky top-0 z-20 shadow-sm">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-stone-800 flex items-center gap-2">
+            <span className="text-amber-600">Oats</span> Tier List
+          </h1>
+          <a 
+            href="#vote-section" 
+            onClick={handleScrollToVote}
+            className="text-sm font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-amber-100 transition-colors cursor-pointer"
+          >
+            Rate Yours <ChevronDown className="w-4 h-4" />
+          </a>
+        </div>
+      </header>
+      
+      <main className="max-w-2xl mx-auto px-4 mt-6">
+        
+        {/* LEADERBOARD SECTION (First thing users see) */}
+        <section className="mb-16 animate-in fade-in zoom-in-95 duration-500">
+          <div className="mb-6">
+            <h2 className="text-3xl font-extrabold text-stone-800">Global Leaderboard</h2>
+            <p className="text-stone-500 mt-2">
+              Flavors ranked by total points. S-Tier awards 7 points, down to F-Tier awarding 1 point.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {rankedFlavors.map((flavor, index) => (
+              <div key={flavor.id} className="bg-white p-4 rounded-2xl shadow-sm border border-stone-100 flex items-center gap-3 sm:gap-4 relative overflow-hidden transition-all duration-300">
+                
+                {/* Rank / Trophy Indicator */}
+                <div className="w-8 sm:w-12 flex justify-center shrink-0">
+                  {index < 3 ? (
+                    <Trophy className={`w-8 h-8 sm:w-10 sm:h-10 ${getTrophyColor(index)}`} />
+                  ) : (
+                    <span className="text-xl sm:text-2xl font-black text-stone-300">#{index + 1}</span>
+                  )}
+                </div>
+
+                {/* Average Tier Badge */}
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-xl flex items-center justify-center font-black text-xl sm:text-2xl shadow-inner ${flavor.avgTierData.color} ${flavor.avgTierData.text}`}>
+                  {flavor.avgTierData.id}
+                </div>
+                
+                {/* Stats */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-stone-800 text-sm sm:text-lg truncate leading-tight">{flavor.name}</h3>
+                  
+                  <div className="text-[11px] sm:text-sm font-medium text-stone-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="text-stone-800 font-bold bg-stone-100 px-2 py-0.5 rounded-md">
+                      {flavor.totalPoints} Pts
+                    </span> 
+                    <span className="text-stone-300 hidden sm:inline">•</span>
+                    <span>{flavor.totalVotes} Votes</span>
+                  </div>
+
+                  {/* Progress Bar (Visual representation of total points) */}
+                  <div className="w-full bg-stone-100 h-1.5 sm:h-2 rounded-full mt-2.5 overflow-hidden">
+                    <div 
+                      className={`${flavor.avgTierData.color} h-full rounded-full transition-all duration-1000 ease-out`} 
+                      style={{ width: `${Math.max(2, (flavor.totalPoints / highestPoints) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Separator */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-stone-300 to-transparent my-8" />
+
+        {/* VOTING SECTION (Scroll down to rate) */}
+        <section id="vote-section" className="scroll-mt-24">
+          <div className="mb-6 text-center sm:text-left">
+            <h2 className="text-2xl font-extrabold text-stone-800">Add Your Rankings</h2>
+            <p className="text-stone-500 mt-1">
+              Select a tier for the flavors you've tried. Your votes instantly update the leaderboard above!
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {initialFlavors.map((flavor) => (
+              <div key={flavor.id} className="bg-white p-4 rounded-2xl shadow-sm border border-stone-200 transition-all duration-300 hover:shadow-md flex flex-col justify-between">
+                
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-stone-800 pr-2">{flavor.name}</h3>
+                  {ratings[flavor.id] && (
+                    <span className="shrink-0 flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
+                      <Star className="w-3 h-3 fill-amber-600" /> Rated
+                    </span>
+                  )}
+                </div>
+                
+                {/* Tier Selection Buttons */}
+                <div className="grid grid-cols-7 gap-1 w-full mt-auto">
+                  {TIERS.map((tier) => {
+                    const isSelected = ratings[flavor.id] === tier.id;
+                    return (
+                      <button
+                        key={tier.id}
+                        onClick={() => handleRate(flavor.id, tier.id)}
+                        className={`
+                          aspect-[4/3] flex items-center justify-center font-black rounded-md text-sm sm:text-base transition-all active:scale-95
+                          ${isSelected 
+                            ? `${tier.color} ${tier.text} shadow-inner ring-2 ring-offset-1 ring-stone-400` 
+                            : 'bg-stone-100 text-stone-400 hover:bg-stone-200'}
+                        `}
+                        title={`Rate as ${tier.id} Tier`}
+                      >
+                        {tier.id}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+              </div>
+            ))}
+          </div>
+        </section>
+
+      </main>
+    </div>
+  );
+}

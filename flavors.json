@@ -35,5 +35,21 @@
   { "id": "caramel-cold-brew", "name": "Caramel Cold Brew", "baseTotal": 270, "baseVotes": 53 },
   { "id": "chocolate-cake", "name": "Chocolate Cake", "baseTotal": 175, "baseVotes": 39 },
   { "id": "cookie-butter", "name": "Cookie Butter", "baseTotal": 255, "baseVotes": 50 },
-  { "id": "blueberry-cobbler", "name": "Blueberry Cobbler", "baseTotal": 210, "baseVotes": 46 }
+  { "id": "blueberry-cobbler", "name": "Blueberry Cobbler", "baseTotal": 210, "baseVotes": 46 },
+  { "id": "black-forest-cake", "name": "Black Forest Cake", "baseTotal": 190, "baseVotes": 40 },
+  { "id": "pumpkin-pie", "name": "Pumpkin Pie", "baseTotal": 205, "baseVotes": 42 },
+  { "id": "tiramisu", "name": "Tiramisu", "baseTotal": 215, "baseVotes": 44 },
+  { "id": "mixed-berries-cream", "name": "Mixed Berries & Cream", "baseTotal": 230, "baseVotes": 48 },
+  { "id": "bananas-foster", "name": "Bananas Foster", "baseTotal": 195, "baseVotes": 41 },
+  { "id": "boston-cream", "name": "Boston Cream", "baseTotal": 265, "baseVotes": 50 },
+  { "id": "peach-upside-down-cake", "name": "Peach Upside Down Cake", "baseTotal": 175, "baseVotes": 38 },
+  { "id": "space-brownie", "name": "Space Brownie", "baseTotal": 280, "baseVotes": 55 },
+  { "id": "snickerdoodle", "name": "Snickerdoodle", "baseTotal": 220, "baseVotes": 46 },
+  { "id": "white-chocolate-raspberry", "name": "White Chocolate Raspberry", "baseTotal": 240, "baseVotes": 49 },
+  { "id": "strawberry-banana", "name": "Strawberry Banana", "baseTotal": 210, "baseVotes": 45 },
+  { "id": "orange-cream-pop", "name": "Orange Cream Pop", "baseTotal": 185, "baseVotes": 42 },
+  { "id": "matcha-mango", "name": "Matcha Mango", "baseTotal": 160, "baseVotes": 37 },
+  { "id": "peppermint-mocha", "name": "Peppermint Mocha", "baseTotal": 250, "baseVotes": 51 },
+  { "id": "gingerbread", "name": "Gingerbread", "baseTotal": 190, "baseVotes": 43 },
+  { "id": "eggnog", "name": "Eggnog", "baseTotal": 170, "baseVotes": 39 }
 ]

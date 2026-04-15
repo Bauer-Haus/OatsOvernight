@@ -16,9 +16,9 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useMemo } = React;
+    const { useState, useMemo, useEffect } = React;
 
-    // SVG Icons to replace the lucide-react imports
+    // SVG Icons
     const TrophyIcon = ({ className }) => (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
     );
@@ -46,23 +46,24 @@
       return TIERS.find(t => t.points === rounded) || TIERS[TIERS.length - 1]; 
     };
 
-    const initialFlavors = [
-      { id: 'mocha-dream', name: 'Mocha Dream', baseTotal: 335, baseVotes: 52 },
-      { id: 'cinnamon-roll', name: 'Cinnamon Roll', baseTotal: 295, baseVotes: 50 },
-      { id: 'mango-custard', name: 'Mango Custard', baseTotal: 260, baseVotes: 49 },
-      { id: 'coconut-cream-pie', name: 'Coconut Cream Pie', baseTotal: 250, baseVotes: 48 },
-      { id: 'mint-chocolate-chip', name: 'Mint Chocolate Chip', baseTotal: 235, baseVotes: 47 },
-      { id: 'cookies-cream', name: 'Cookies & Cream', baseTotal: 220, baseVotes: 49 },
-      { id: 'dark-chocolate', name: 'Dark Chocolate Sea Salt', baseTotal: 210, baseVotes: 46 },
-      { id: 'maple-pancakes', name: 'Maple Pancakes', baseTotal: 180, baseVotes: 44 },
-      { id: 'pb-cookie-dough', name: 'Peanut Butter Cookie Dough', baseTotal: 165, baseVotes: 45 },
-      { id: 'smores', name: 'S\'mores', baseTotal: 150, baseVotes: 42 },
-      { id: 'strawberries-cream', name: 'Strawberries & Cream', baseTotal: 120, baseVotes: 43 },
-      { id: 'glazed-blueberry', name: 'Glazed Blueberry Donut', baseTotal: 90, baseVotes: 40 },
-    ];
-
     function App() {
       const [ratings, setRatings] = useState({});
+      const [flavors, setFlavors] = useState([]);
+      const [isLoading, setIsLoading] = useState(true);
+
+      // Fetch flavors from the JSON file when the app loads
+      useEffect(() => {
+        fetch('flavors.json')
+          .then(response => response.json())
+          .then(data => {
+            setFlavors(data);
+            setIsLoading(false);
+          })
+          .catch(error => {
+            console.error("Error loading flavors:", error);
+            setIsLoading(false);
+          });
+      }, []);
 
       const handleRate = (flavorId, tierId) => {
         if (ratings[flavorId] === tierId) {
@@ -75,7 +76,7 @@
       };
 
       const rankedFlavors = useMemo(() => {
-        return initialFlavors.map(flavor => {
+        return flavors.map(flavor => {
           const userTier = ratings[flavor.id];
           const userPoints = userTier ? getTierPoints(userTier) : 0;
           
@@ -95,7 +96,7 @@
           ? b.totalPoints - a.totalPoints 
           : a.name.localeCompare(b.name)
         );
-      }, [ratings]);
+      }, [ratings, flavors]);
 
       const highestPoints = rankedFlavors[0]?.totalPoints || 1;
 
@@ -115,6 +116,16 @@
           voteSection.scrollIntoView({ behavior: 'smooth' });
         }
       };
+
+      // Show a loading state while fetching the JSON
+      if (isLoading) {
+        return (
+          <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center font-sans">
+            <div className="w-8 h-8 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin mb-4"></div>
+            <p className="text-stone-500 font-bold animate-pulse">Loading Leaderboard...</p>
+          </div>
+        );
+      }
 
       return (
         <div className="min-h-screen bg-stone-50 text-stone-900 font-sans pb-20">
@@ -189,7 +200,7 @@
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {initialFlavors.map((flavor) => (
+                {flavors.map((flavor) => (
                   <div key={flavor.id} className="bg-white p-4 rounded-2xl shadow-sm border border-stone-200 transition-all duration-300 hover:shadow-md flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="font-bold text-stone-800 pr-2">{flavor.name}</h3>

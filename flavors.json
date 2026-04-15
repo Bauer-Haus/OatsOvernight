@@ -10,5 +10,6 @@
   { "id": "pb-cookie-dough", "name": "Peanut Butter Cookie Dough", "baseTotal": 165, "baseVotes": 45 },
   { "id": "smores", "name": "S'mores", "baseTotal": 150, "baseVotes": 42 },
   { "id": "strawberries-cream", "name": "Strawberries & Cream", "baseTotal": 120, "baseVotes": 43 },
-  { "id": "glazed-blueberry", "name": "Glazed Blueberry Donut", "baseTotal": 90, "baseVotes": 40 }
+  { "id": "glazed-blueberry", "name": "Glazed Blueberry Donut", "baseTotal": 90, "baseVotes": 40 },
+  { "id": "test", "name": "TEST", "baseTotal": 90, "baseVotes": 40 }
 ]

@@ -1,0 +1,14 @@
+[
+  { "id": "mocha-dream", "name": "Mocha Dream", "baseTotal": 335, "baseVotes": 52 },
+  { "id": "cinnamon-roll", "name": "Cinnamon Roll", "baseTotal": 295, "baseVotes": 50 },
+  { "id": "mango-custard", "name": "Mango Custard", "baseTotal": 260, "baseVotes": 49 },
+  { "id": "coconut-cream-pie", "name": "Coconut Cream Pie", "baseTotal": 250, "baseVotes": 48 },
+  { "id": "mint-chocolate-chip", "name": "Mint Chocolate Chip", "baseTotal": 235, "baseVotes": 47 },
+  { "id": "cookies-cream", "name": "Cookies & Cream", "baseTotal": 220, "baseVotes": 49 },
+  { "id": "dark-chocolate", "name": "Dark Chocolate Sea Salt", "baseTotal": 210, "baseVotes": 46 },
+  { "id": "maple-pancakes", "name": "Maple Pancakes", "baseTotal": 180, "baseVotes": 44 },
+  { "id": "pb-cookie-dough", "name": "Peanut Butter Cookie Dough", "baseTotal": 165, "baseVotes": 45 },
+  { "id": "smores", "name": "S'mores", "baseTotal": 150, "baseVotes": 42 },
+  { "id": "strawberries-cream", "name": "Strawberries & Cream", "baseTotal": 120, "baseVotes": 43 },
+  { "id": "glazed-blueberry", "name": "Glazed Blueberry Donut", "baseTotal": 90, "baseVotes": 40 }
+]
